@@ -65,18 +65,26 @@ From Python's executive summary:
 
 1. Fast development
 2. Neat syntax
-3. duck typing
+3. **duck typing**
 4. *Batteries included*
 5. Community
 
 Lots of other...
 </script></section><section  data-markdown><script type="text/template">
+#### You won't have problems with types if you use dynamically typed language
+
+<img src="roll_safe.jpg" width="600">
+</script></section><section  data-markdown><script type="text/template">
 ### Why static typing may be cool?
 
-1. Faster to understand code.
-2. Code easier to maintain.
-3. Easier to debug(?).
-4. Improvement of quality.
+1. Faster to understand code
+2. Code easier to maintain
+3. Easier to debug(?)
+4. Early error detection\*
+5. Requires to focus more on types (thx captain obvious!)
+
+<br>
+\*But we always write great unit tests, don't we?
 </script></section><section  data-markdown><script type="text/template">
 ### Duck typing + static types = Mypy
 </script></section><section  data-markdown><script type="text/template">
@@ -247,17 +255,22 @@ def foo() -> Dict:
 data = cast(Mapping, foo())
 ```
 </script></section><section  data-markdown><script type="text/template">
-## Custom types
+* At runtime **cast** will just return value from foo() call.
+* When MYPY is launched it'll set data variable type to Mapping
+* No performance issues as it's done statically
+</script></section><section  data-markdown><script type="text/template">
+### Custom types
 
 
 ```python
 from typing import NewType
 
-connection_id = NewType('connection_id', int)
+ConnectionID = NewType('ConnectionID', int)
+# <function NewType.<locals>.new_type at 0x7fda0d22a510>
 ```
 
 ```python
-def get_client(conn_id: connection_id,
+def get_client(conn_id: ConnectionID,
                cfg: Mapping) -> Optional[ServiceClientBase]:
     if conn_id == 1:
         return ServiceAClient(**cfg)
@@ -265,6 +278,8 @@ def get_client(conn_id: connection_id,
         return ServiceBClient(**cfg)
     return None
 ```
+
+Convenient way of defining your business attributes.
 </script></section><section  data-markdown><script type="text/template">
 ### How to add Mypy in currently developed app/service?
 
@@ -312,24 +327,28 @@ def some_function() -> 'xyz':
 In some situations we may end up using **# type: ignore** comment.
 
 ```python
-@lru_cache(1)
 @property   # type: ignore
+@lru_cache(1)
 def is_passing(self) -> bool:
     ...
 ```
 
 In this case mypy will identify type not as boolean but as property decorated.
 </script></section><section  data-markdown><script type="text/template">
-While passing e.g. int argument to a function with Optional[int] we'll
-end up with mypy's error about types mismatches...
+Sometimes MYPY can get lost in typing and report weird problems which
+requires some explicite casting or assertion.
+</script></section><section  data-markdown><script type="text/template">
+## Pros
 
-```python
-def some_function(x: Optional[int] = None) -> str:
-    ...
+1. Optional
+2. Static - not affecting performance
+3. Gives you advantages of statically typed languages with low cost
+4. Regular releases
+5. Guido Van Rossum 
+</script></section><section  data-markdown><script type="text/template">
+## Cons
 
-z = 10
-some_function(cast(Optional[int], z))
-```
+"Minor" issues which makes you frustrated after some time...
 </script></section><section  data-markdown><script type="text/template">
 ## Considering mypy?
 </script></section><section  data-markdown><script type="text/template">
@@ -342,6 +361,7 @@ Not necessary:
 
 1. Ad-hoc written few liners
 2. Simple scripts performing custom operations
+3. Not in testing modules!
 </script></section><section  data-markdown><script type="text/template">
 ## Questions?
 </script></section><section  data-markdown><script type="text/template">
@@ -351,8 +371,7 @@ Not necessary:
 
 stoworow@gmail.com
 
-https://github.com/stovorov/presentations
-
+https://stovorov.github.io/static-typing-for-python
 </script></section></div>
         </div>
 
